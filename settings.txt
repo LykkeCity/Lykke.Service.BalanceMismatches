@@ -27,6 +27,6 @@
   },
   "BalancesServiceClient":
   {
-    "ServiceUrl": "${BalancesServiceApiUrl}"
+    "ServiceUrl": "${BalancesServiceUrl}"
   }
 }
