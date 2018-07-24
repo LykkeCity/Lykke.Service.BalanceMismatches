@@ -1,0 +1,32 @@
+{
+  "BalanceMismatchesService": 
+  {
+    "Db":
+    {
+      "LogsConnString": "${LogsConnString}:[AzureTableStorage]",
+      "DataConnString": "${BalanceMismatchesDataConnString}:[AzureTableStorage]"
+    },
+    "Cqrs":
+    {
+      "RabbitConnectionString": "${CqrsRabbitConnString}:[RabbitMq]",
+      "RetryDelay": "00:00:15"
+    }
+    "HotWallets": "${BalanceMismatchesHotWallets}":[JsonArray]
+  },
+  "MonitoringServiceClient": 
+  {
+    "MonitoringServiceUrl": "${MonitoringServiceUrl}"
+  },
+  "SlackNotifications": 
+  {
+    "AzureQueue": 
+    {
+      "ConnectionString": "${SlackNotificationsConnString}:[AzureTableStorage]",
+      "QueueName": "slack-notifications"
+    }
+  },
+  "BalancesServiceClient":
+  {
+    "ServiceUrl": "${BalancesServiceApiUrl}"
+  }
+}

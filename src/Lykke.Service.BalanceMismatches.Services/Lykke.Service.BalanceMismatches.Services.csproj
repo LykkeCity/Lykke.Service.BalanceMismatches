@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Lykke.Service.BalanceMismatches.Services</AssemblyName>
+    <RootNamespace>Lykke.Service.BalanceMismatches.Services</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Lykke.Common" Version="7.0.2" />
+    <PackageReference Include="Lykke.Service.Balances.Client" Version="1.1.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.BalanceMismatches.Core\Lykke.Service.BalanceMismatches.Core.csproj" />
+  </ItemGroup>
+</Project>
