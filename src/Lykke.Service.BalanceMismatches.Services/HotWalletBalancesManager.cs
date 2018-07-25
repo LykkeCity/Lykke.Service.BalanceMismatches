@@ -10,23 +10,26 @@ namespace Lykke.Service.BalanceMismatches.Services
     public class HotWalletBalancesManager : IHotWalletBalancesManager
     {
         private readonly IDistributedCache _cache;
-        private readonly IHotWalletManager _hotWalletRepository;
+        private readonly IHotWalletManager _hotWalletManager;
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
         public HotWalletBalancesManager(
             IDistributedCache cache,
-            IHotWalletManager hotWalletRepository,
+            IHotWalletManager hotWalletManager,
             IWalletBalanceRepository walletBalanceRepository)
         {
             _cache = cache;
-            _hotWalletRepository = hotWalletRepository;
+            _hotWalletManager = hotWalletManager;
             _walletBalanceRepository = walletBalanceRepository;
         }
 
-        public async Task<decimal> GetByAssetIdAsync(string assetId)
+        public async Task<decimal?> GetByAssetIdAsync(string assetId)
         {
-            var hotWalletId = _hotWalletRepository.GetIdByAssetId(assetId);
+            var hotWalletId = _hotWalletManager.GetIdByAssetId(assetId);
+            if (hotWalletId == null)
+                return null;
+
             await _lock.WaitAsync();
             try
             {
@@ -41,7 +44,9 @@ namespace Lykke.Service.BalanceMismatches.Services
 
         public async Task<(decimal, decimal)> UpdateAsync(string assetId, decimal diff)
         {
-            var hotWalletId = _hotWalletRepository.GetIdByAssetId(assetId);
+            var hotWalletId = _hotWalletManager.GetIdByAssetId(assetId);
+            if (hotWalletId == null)
+                throw new InvalidOperationException($"HotWallet is not configured for asset {assetId}");
 
             await _lock.WaitAsync();
             try

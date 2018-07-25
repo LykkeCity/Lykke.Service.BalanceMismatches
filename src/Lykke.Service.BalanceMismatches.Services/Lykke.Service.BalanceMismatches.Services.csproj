@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="7.0.2" />
-    <PackageReference Include="Lykke.Service.Balances.Client" Version="1.1.2" />
+    <PackageReference Include="Lykke.Service.Balances.Client" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Service.BalanceMismatches.Core\Lykke.Service.BalanceMismatches.Core.csproj" />

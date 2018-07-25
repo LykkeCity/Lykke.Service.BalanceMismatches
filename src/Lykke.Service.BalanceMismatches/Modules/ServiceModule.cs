@@ -2,6 +2,7 @@
 using AzureStorage;
 using AzureStorage.Tables;
 using Lykke.Common.Log;
+using Lykke.Service.Balances.Client;
 using Lykke.Service.BalanceMismatches.AzureRepositories;
 using Lykke.Service.BalanceMismatches.Core.Repositories;
 using Lykke.Service.BalanceMismatches.Core.Services;
@@ -9,6 +10,7 @@ using Lykke.Service.BalanceMismatches.Services;
 using Lykke.Service.BalanceMismatches.Settings;
 using Lykke.SettingsReader;
 using System;
+using System.Linq;
 
 namespace Lykke.Service.BalanceMismatches.Modules
 {
@@ -29,7 +31,12 @@ namespace Lykke.Service.BalanceMismatches.Modules
 
             builder.RegisterType<HotWalletManager>()
                 .As<IHotWalletManager>()
-                .SingleInstance();
+                .SingleInstance()
+                .WithParameter(
+                    TypedParameter.From(
+                        _appSettings.Nested(s => s.BalanceMismatchesService.HotWallets).CurrentValue.Select(i => (i.AssetId, i.WalletId))));
+
+            builder.RegisterBalancesClient(_appSettings.Nested(s => s.BalancesServiceClient).CurrentValue);
 
             Func<ILogFactory, INoSQLTableStorage<WalletBalance>> storageInit = l =>
                 AzureTableStorage<WalletBalance>.Create(_appSettings.Nested(s => s.BalanceMismatchesService.Db.DataConnString), "HotWalletBalances", l);

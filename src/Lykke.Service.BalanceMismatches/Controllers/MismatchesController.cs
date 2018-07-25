@@ -31,39 +31,46 @@ namespace Lykke.Service.BalanceMismatches.Controllers
         public async Task<IActionResult> GetBalanceMismath(string assetId)
         {
             if (string.IsNullOrWhiteSpace(assetId))
-                return BadRequest($"{assetId} is empty");
+                return BadRequest($"{nameof(assetId)} is empty");
+
+            var hotWalletBalance = await _hotWalletsBalanceRepository.GetByAssetIdAsync(assetId);
+            if (!hotWalletBalance.HasValue)
+                return NotFound();
 
             var totalBalances = await _balancesClient.GetTotalBalances();
 
+            decimal clientSumBalance = 0;
+            decimal clientSumReserved = 0;
             var assetBalance = totalBalances.FirstOrDefault(b => b.AssetId == assetId);
-            if (assetBalance == null)
-                return NotFound();
-
-            var hotWalletBalance = await _hotWalletsBalanceRepository.GetByAssetIdAsync(assetId);
+            if (assetBalance != null)
+            {
+                clientSumBalance = assetBalance.Balance;
+                clientSumReserved = assetBalance.Reserved;
+            }
 
             return Ok(
                 new AssetBalanceMismatchResponse
                 {
                     AssetId = assetId,
-                    HotWalletBalance = hotWalletBalance,
-                    ClientSumBalance = assetBalance.Balance,
-                    ClientSumReserved = assetBalance.Reserved,
+                    HotWalletBalance = hotWalletBalance.Value,
+                    ClientSumBalance = clientSumBalance,
+                    ClientSumReserved = clientSumReserved,
                 });
         }
 
         /// <summary>Fetches asset balance mismatch.</summary>
         /// <remarks>This method must be avaialble only via swagger. It MUST NOT be exposed for service clients.</remarks>
-        [HttpPost("hotwallet/{assetId}/{change}")]
+        [HttpPost("hotwallet/{assetId}/{diff}")]
         [SwaggerOperation("ChangeHotWalletBalance")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ChangeHotWalletBalance(string assetId, decimal diff)
         {
             if (string.IsNullOrWhiteSpace(assetId))
-                return BadRequest($"{assetId} is empty");
+                return BadRequest($"{nameof(assetId)} is empty");
 
             if (diff == 0)
-                return BadRequest($"{diff} is 0");
+                return BadRequest($"{nameof(diff)} is 0");
 
             (decimal oldBalance, decimal newBalance) = await _hotWalletsBalanceRepository.UpdateAsync(assetId, diff);
 

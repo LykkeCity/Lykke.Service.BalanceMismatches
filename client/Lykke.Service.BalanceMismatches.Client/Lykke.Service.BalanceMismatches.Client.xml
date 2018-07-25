@@ -4,6 +4,11 @@
         <name>Lykke.Service.BalanceMismatches.Client</name>
     </assembly>
     <members>
+        <member name="T:Lykke.Service.BalanceMismatches.Client.AutofacExtension">
+            <summary>
+            Autofac extension for client registration.
+            </summary>
+        </member>
         <member name="M:Lykke.Service.BalanceMismatches.Client.AutofacExtension.RegisterBalanceMismatchesClient(Autofac.ContainerBuilder,Lykke.Service.BalanceMismatches.Client.BalanceMismatchesServiceClientSettings,System.Func{Lykke.HttpClientGenerator.HttpClientGeneratorBuilder,Lykke.HttpClientGenerator.HttpClientGeneratorBuilder})">
             <summary>
             Registers <see cref="T:Lykke.Service.BalanceMismatches.Client.IBalanceMismatchesClient"/> in Autofac container using <see cref="T:Lykke.Service.BalanceMismatches.Client.BalanceMismatchesServiceClientSettings"/>.

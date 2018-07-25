@@ -18,7 +18,7 @@ namespace Lykke.Service.BalanceMismatches.Services
         {
             if (_walletsDict.ContainsKey(assetId))
                 return _walletsDict[assetId];
-            throw new InvalidOperationException($"HotWallet for assetId {assetId} is not configured");
+            return null;
         }
 
         public bool IsAssetIdConfigured(string assetId)

@@ -9,7 +9,7 @@ namespace Lykke.Service.BalanceMismatches.Cqrs
         private readonly IHotWalletManager _hotWalletManager;
         private readonly IHotWalletBalancesManager _hotWalletBalancesManager;
 
-        internal CashinProjection(IHotWalletManager hotWalletManager, IHotWalletBalancesManager hotWalletBalancesManager)
+        public CashinProjection(IHotWalletManager hotWalletManager, IHotWalletBalancesManager hotWalletBalancesManager)
         {
             _hotWalletManager = hotWalletManager;
             _hotWalletBalancesManager = hotWalletBalancesManager;
