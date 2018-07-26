@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
@@ -11,7 +10,6 @@ using Lykke.Messaging.RabbitMq;
 using Lykke.Service.BalanceMismatches.Cqrs;
 using Lykke.Service.BalanceMismatches.Settings;
 using Lykke.SettingsReader;
-using System;
 using System.Collections.Generic;
 
 namespace Lykke.Service.BalanceMismatches.Modules
@@ -90,26 +88,6 @@ namespace Lykke.Service.BalanceMismatches.Modules
                     .From(BlockchainCashinDetectorBoundedContext.Name)
                     .On(eventsRoute)
                     .WithProjection(typeof(CashinProjection), Self));
-        }
-    }
-
-    internal class AutofacDependencyResolver : IDependencyResolver
-    {
-        private readonly IComponentContext _context;
-
-        public AutofacDependencyResolver([NotNull] IComponentContext kernel)
-        {
-            _context = kernel ?? throw new ArgumentNullException(nameof(kernel));
-        }
-
-        public object GetService(Type type)
-        {
-            return _context.Resolve(type);
-        }
-
-        public bool HasService(Type type)
-        {
-            return _context.IsRegistered(type);
         }
     }
 }
