@@ -15,20 +15,20 @@ namespace Lykke.Service.BalanceMismatches.AzureRepositories
             _storage = storageFactoryMethod(logFactory);
         }
 
-        public async Task<decimal?> GetWalletBalanceAsync(string walletId)
+        public async Task<decimal?> GetWalletBalanceAsync(string walletAddress)
         {
-            var balanceEntity = await _storage.GetDataAsync(WalletBalance.GetPartitionKey(), WalletBalance.GetRowKey(walletId));
+            var balanceEntity = await _storage.GetDataAsync(WalletBalance.GetPartitionKey(), WalletBalance.GetRowKey(walletAddress));
             if (balanceEntity == null)
                 return 0;
             return decimal.Parse(balanceEntity.BalanceStr);
         }
 
-        public async Task UpdateAsync(string walletId, decimal newValue)
+        public async Task UpdateAsync(string walletAddress, decimal newValue)
         {
             var entity = new WalletBalance
             {
                 PartitionKey = WalletBalance.GetPartitionKey(),
-                RowKey = WalletBalance.GetRowKey(walletId),
+                RowKey = WalletBalance.GetRowKey(walletAddress),
                 BalanceStr = newValue.ToString(),
             };
 

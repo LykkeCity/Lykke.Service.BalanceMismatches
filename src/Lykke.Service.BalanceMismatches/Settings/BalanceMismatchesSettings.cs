@@ -17,6 +17,6 @@ namespace Lykke.Service.BalanceMismatches.Settings
     {
         public string AssetId { get; set; }
 
-        public string WalletId { get; set; }
+        public string WalletAddress { get; set; }
     }
 }

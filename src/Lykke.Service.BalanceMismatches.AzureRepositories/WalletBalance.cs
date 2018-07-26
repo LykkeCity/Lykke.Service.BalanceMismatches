@@ -11,9 +11,9 @@ namespace Lykke.Service.BalanceMismatches.AzureRepositories
             return "HotWalletBalance";
         }
 
-        public static string GetRowKey(string walletId)
+        public static string GetRowKey(string walletAddress)
         {
-            return walletId;
+            return walletAddress;
         }
     }
 }

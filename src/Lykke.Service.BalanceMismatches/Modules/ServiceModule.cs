@@ -34,7 +34,7 @@ namespace Lykke.Service.BalanceMismatches.Modules
                 .SingleInstance()
                 .WithParameter(
                     TypedParameter.From(
-                        _appSettings.Nested(s => s.BalanceMismatchesService.HotWallets).CurrentValue.Select(i => (i.AssetId, i.WalletId))));
+                        _appSettings.Nested(s => s.BalanceMismatchesService.HotWallets).CurrentValue.Select(i => (i.AssetId, i.WalletAddress))));
 
             builder.RegisterBalancesClient(_appSettings.Nested(s => s.BalancesServiceClient).CurrentValue);
 

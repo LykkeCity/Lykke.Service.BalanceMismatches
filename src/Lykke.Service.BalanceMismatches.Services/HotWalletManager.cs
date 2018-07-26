@@ -1,5 +1,4 @@
 ﻿using Lykke.Service.BalanceMismatches.Core.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +13,7 @@ namespace Lykke.Service.BalanceMismatches.Services
             _walletsDict = hotWallet.ToDictionary(i => i.Item1, i => i.Item2);
         }
 
-        public string GetIdByAssetId(string assetId)
+        public string GetAddressByAssetId(string assetId)
         {
             if (_walletsDict.ContainsKey(assetId))
                 return _walletsDict[assetId];

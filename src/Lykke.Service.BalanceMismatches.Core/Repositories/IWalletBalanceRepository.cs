@@ -4,8 +4,8 @@ namespace Lykke.Service.BalanceMismatches.Core.Repositories
 {
     public interface IWalletBalanceRepository
     {
-        Task<decimal?> GetWalletBalanceAsync(string walletId);
+        Task<decimal?> GetWalletBalanceAsync(string walletAddress);
 
-        Task UpdateAsync(string walletId, decimal newValue);
+        Task UpdateAsync(string walletAddress, decimal newValue);
     }
 }

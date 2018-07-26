@@ -2,7 +2,7 @@
 {
     public interface IHotWalletManager
     {
-        string GetIdByAssetId(string assetId);
+        string GetAddressByAssetId(string assetId);
 
         bool IsAssetIdConfigured(string assetId);
     }
