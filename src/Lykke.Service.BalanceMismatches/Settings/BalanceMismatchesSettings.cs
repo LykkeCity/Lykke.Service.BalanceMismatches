@@ -10,13 +10,6 @@ namespace Lykke.Service.BalanceMismatches.Settings
 
         public CqrsSettings Cqrs { get; set; }
 
-        public List<HotWallet> HotWallets { get; set; }
-    }
-
-    public class HotWallet
-    {
-        public string AssetId { get; set; }
-
-        public string WalletAddress { get; set; }
+        public List<string> Assets { get; set; }
     }
 }

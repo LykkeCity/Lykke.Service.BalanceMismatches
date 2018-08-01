@@ -26,14 +26,10 @@ namespace Lykke.Service.BalanceMismatches.Services
 
         public async Task<decimal?> GetByAssetIdAsync(string assetId)
         {
-            var hotWalletAddress = _hotWalletManager.GetAddressByAssetId(assetId);
-            if (hotWalletAddress == null)
-                return null;
-
             await _lock.WaitAsync();
             try
             {
-                decimal result = await FetchAssetBalanceAsync(hotWalletAddress);
+                decimal result = await FetchAssetBalanceAsync(assetId);
                 return result;
             }
             finally
@@ -44,21 +40,17 @@ namespace Lykke.Service.BalanceMismatches.Services
 
         public async Task<(decimal, decimal)> UpdateAsync(string assetId, decimal diff)
         {
-            var hotWalletAddress = _hotWalletManager.GetAddressByAssetId(assetId);
-            if (hotWalletAddress == null)
-                throw new InvalidOperationException($"HotWallet is not configured for asset {assetId}");
-
             await _lock.WaitAsync();
             try
             {
-                decimal currentBalance = await FetchAssetBalanceAsync(hotWalletAddress);
+                decimal currentBalance = await FetchAssetBalanceAsync(assetId);
 
                 decimal newBalance = currentBalance + diff;
                 if (currentBalance < 0)
                     throw new InvalidOperationException(
                         $"{assetId} hot wallet balance change from {currentBalance} with diff = {diff} resulted in negative value");
 
-                await UpdateAssetVolumeAsync(hotWalletAddress, currentBalance);
+                await UpdateAssetVolumeAsync(assetId, currentBalance);
                 return (currentBalance, newBalance);
             }
             finally
@@ -67,25 +59,25 @@ namespace Lykke.Service.BalanceMismatches.Services
             }
         }
 
-        private async Task<decimal> FetchAssetBalanceAsync(string walletAddress)
+        private async Task<decimal> FetchAssetBalanceAsync(string assetId)
         {
-            string assetVolumeStr = await _cache.GetStringAsync(walletAddress);
+            string assetVolumeStr = await _cache.GetStringAsync(assetId);
             if (!string.IsNullOrWhiteSpace(assetVolumeStr))
                 return decimal.Parse(assetVolumeStr);
 
             decimal result = 0;
-            var walletBalance = await _walletBalanceRepository.GetWalletBalanceAsync(walletAddress);
+            var walletBalance = await _walletBalanceRepository.GetWalletBalanceAsync(assetId);
             if (walletBalance.HasValue)
                 result = walletBalance.Value;
-            await _cache.SetStringAsync(walletAddress, result.ToString());
+            await _cache.SetStringAsync(assetId, result.ToString());
             return result;
         }
 
-        private async Task UpdateAssetVolumeAsync(string walletAddress, decimal newBalance)
+        private async Task UpdateAssetVolumeAsync(string assetId, decimal newBalance)
         {
-            await _cache.SetStringAsync(walletAddress, newBalance.ToString());
+            await _cache.SetStringAsync(assetId, newBalance.ToString());
 
-            await _walletBalanceRepository.UpdateAsync(walletAddress, newBalance);
+            await _walletBalanceRepository.UpdateAsync(assetId, newBalance);
         }
     }
 }

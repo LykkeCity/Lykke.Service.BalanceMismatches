@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
@@ -7,6 +8,7 @@ using Lykke.Job.BlockchainCashinDetector.Contract.Events;
 using Lykke.Messaging;
 using Lykke.Messaging.Contract;
 using Lykke.Messaging.RabbitMq;
+using Lykke.Messaging.Serialization;
 using Lykke.Service.BalanceMismatches.Cqrs;
 using Lykke.Service.BalanceMismatches.Settings;
 using Lykke.SettingsReader;
@@ -14,6 +16,7 @@ using System.Collections.Generic;
 
 namespace Lykke.Service.BalanceMismatches.Modules
 {
+    [UsedImplicitly]
     public class CqrsModule : Module
     {
         private static readonly string Self = "balance-mismatches";
@@ -78,7 +81,7 @@ namespace Lykke.Service.BalanceMismatches.Modules
                 true,
                 Register.DefaultEndpointResolver(new RabbitMqConventionEndpointResolver(
                     "RabbitMq",
-                    "messagepack",
+                    SerializationFormat.MessagePack,
                     environment: "lykke")),
 
                 Register.BoundedContext(Self)
