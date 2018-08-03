@@ -50,7 +50,7 @@ namespace Lykke.Service.BalanceMismatches.Services
                     throw new InvalidOperationException(
                         $"{assetId} hot wallet balance change from {currentBalance} with diff = {diff} resulted in negative value");
 
-                await UpdateAssetVolumeAsync(assetId, currentBalance);
+                await UpdateAssetVolumeAsync(assetId, newBalance);
                 return (currentBalance, newBalance);
             }
             finally
