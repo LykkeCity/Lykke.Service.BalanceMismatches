@@ -10,17 +10,12 @@ namespace Lykke.Service.BalanceMismatches.Services
     public class HotWalletBalancesManager : IHotWalletBalancesManager
     {
         private readonly IDistributedCache _cache;
-        private readonly IHotWalletManager _hotWalletManager;
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
-        public HotWalletBalancesManager(
-            IDistributedCache cache,
-            IHotWalletManager hotWalletManager,
-            IWalletBalanceRepository walletBalanceRepository)
+        public HotWalletBalancesManager(IDistributedCache cache, IWalletBalanceRepository walletBalanceRepository)
         {
             _cache = cache;
-            _hotWalletManager = hotWalletManager;
             _walletBalanceRepository = walletBalanceRepository;
         }
 

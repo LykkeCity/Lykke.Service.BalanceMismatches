@@ -1,7 +1,5 @@
 ﻿using AzureStorage;
-using Lykke.Common.Log;
 using Lykke.Service.BalanceMismatches.Core.Repositories;
-using System;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.BalanceMismatches.AzureRepositories
@@ -10,9 +8,9 @@ namespace Lykke.Service.BalanceMismatches.AzureRepositories
     {
         private readonly INoSQLTableStorage<WalletBalance> _storage;
 
-        public WalletBalanceRepository(ILogFactory logFactory, Func<ILogFactory, INoSQLTableStorage<WalletBalance>> storageFactoryMethod)
+        public WalletBalanceRepository(INoSQLTableStorage<WalletBalance> storage)
         {
-            _storage = storageFactoryMethod(logFactory);
+            _storage = storage;
         }
 
         public async Task<decimal?> GetWalletBalanceAsync(string walletAddress)

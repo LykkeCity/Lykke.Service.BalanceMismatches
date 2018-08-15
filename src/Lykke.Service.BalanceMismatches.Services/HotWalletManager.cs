@@ -5,7 +5,7 @@ namespace Lykke.Service.BalanceMismatches.Services
 {
     public class HotWalletManager : IHotWalletManager
     {
-        private readonly HashSet<string> _assetIds;
+        private readonly HashSet<string> _assetIds = new HashSet<string>();
 
         public HotWalletManager(IEnumerable<string> assets)
         {
