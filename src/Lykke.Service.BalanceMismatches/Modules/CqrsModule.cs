@@ -37,7 +37,6 @@ namespace Lykke.Service.BalanceMismatches.Modules
             {
                 Uri = _settings.RabbitConnectionString
             };
-            var rabbitMqEndpoint = rabbitMqSettings.Endpoint.ToString();
 
             // Command handlers
             builder.RegisterType<CashOperationsProjection>();
@@ -53,9 +52,11 @@ namespace Lykke.Service.BalanceMismatches.Modules
                                 {
                                     "RabbitMq",
                                     new TransportInfo(
-                                        rabbitMqEndpoint,
+                                        rabbitMqSettings.Endpoint.ToString(),
                                         rabbitMqSettings.UserName,
-                                        rabbitMqSettings.Password, "None", "RabbitMq")
+                                        rabbitMqSettings.Password,
+                                        "None",
+                                        "RabbitMq")
                                 }
                             }),
                         new RabbitMqTransportFactory(logFactory));
