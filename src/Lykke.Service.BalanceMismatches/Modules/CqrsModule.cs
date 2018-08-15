@@ -88,8 +88,11 @@ namespace Lykke.Service.BalanceMismatches.Modules
 
                 Register.BoundedContext(Self)
                     .FailedCommandRetryDelay(defaultRetryDelay)
+
                     .ListeningEvents(typeof(Job.BlockchainCashinDetector.Contract.Events.CashinCompletedEvent))
                     .From(BlockchainCashinDetectorBoundedContext.Name).On(eventsRoute)
+                    .WithProjection(typeof(CashOperationsProjection), Self)
+
                     .ListeningEvents(typeof(CashoutCompletedEvent))
                     .From(BlockchainCashoutProcessorBoundedContext.Name).On(eventsRoute)
                     .WithProjection(typeof(CashOperationsProjection), Self));
