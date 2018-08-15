@@ -4,6 +4,8 @@ using Lykke.Common.Log;
 using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
 using Lykke.Job.BlockchainCashinDetector.Contract;
+using Lykke.Job.BlockchainCashoutProcessor.Contract;
+using Lykke.Job.BlockchainCashoutProcessor.Contract.Events;
 using Lykke.Messaging;
 using Lykke.Messaging.Contract;
 using Lykke.Messaging.RabbitMq;
@@ -12,8 +14,6 @@ using Lykke.Service.BalanceMismatches.Cqrs;
 using Lykke.Service.BalanceMismatches.Settings;
 using Lykke.SettingsReader;
 using System.Collections.Generic;
-using Lykke.Job.BlockchainCashoutProcessor.Contract;
-using Lykke.Job.BlockchainCashoutProcessor.Contract.Events;
 
 namespace Lykke.Service.BalanceMismatches.Modules
 {
@@ -91,9 +91,8 @@ namespace Lykke.Service.BalanceMismatches.Modules
 
                     .ListeningEvents(typeof(Job.BlockchainCashinDetector.Contract.Events.CashinCompletedEvent))
                     .From(BlockchainCashinDetectorBoundedContext.Name).On(eventsRoute)
-                    .WithProjection(typeof(CashOperationsProjection), Self)
 
-                    .ListeningEvents(typeof(CashoutCompletedEvent))
+                    .ListeningEvents(typeof(CashinCompletedEvent), typeof(CashoutCompletedEvent))
                     .From(BlockchainCashoutProcessorBoundedContext.Name).On(eventsRoute)
                     .WithProjection(typeof(CashOperationsProjection), Self));
         }
