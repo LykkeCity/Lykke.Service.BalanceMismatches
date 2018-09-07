@@ -1,9 +1,9 @@
-﻿using Common.Log;
+﻿using System;
+using System.Threading.Tasks;
+using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Job.BlockchainCashoutProcessor.Contract.Events;
 using Lykke.Service.BalanceMismatches.Core.Services;
-using System;
-using System.Threading.Tasks;
 
 namespace Lykke.Service.BalanceMismatches.Cqrs
 {

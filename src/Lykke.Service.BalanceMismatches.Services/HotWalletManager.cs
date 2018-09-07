@@ -7,7 +7,7 @@ namespace Lykke.Service.BalanceMismatches.Services
     {
         private readonly HashSet<string> _assetIds = new HashSet<string>();
 
-        public HotWalletManager(IEnumerable<string> assets)
+        public HotWalletManager(List<string> assets)
         {
             foreach (var assetId in assets)
             {

@@ -23,9 +23,9 @@
     <None Remove="Lykke.Service.BalanceMismatches.Client.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Common" Version="7.0.3" />
-    <PackageReference Include="Lykke.HttpClientGenerator" Version="2.1.2" />
-    <PackageReference Include="Lykke.SettingsReader" Version="3.0.0" />
+    <PackageReference Include="Lykke.Common" Version="7.0.4" />
+    <PackageReference Include="Lykke.HttpClientGenerator" Version="2.2.0" />
+    <PackageReference Include="Lykke.SettingsReader" Version="4.0.1" />
     <PackageReference Include="Refit" Version="4.6.30" />
   </ItemGroup>
 </Project>

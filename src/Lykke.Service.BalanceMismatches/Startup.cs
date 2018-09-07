@@ -6,7 +6,6 @@ using Lykke.Sdk.Health;
 using Lykke.Sdk.Middleware;
 using Lykke.Service.BalanceMismatches.Settings;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -87,10 +86,6 @@ namespace Lykke.Service.BalanceMismatches
                 };
                 */
             });
-
-#if DEBUG
-            TelemetryConfiguration.Active.DisableTelemetry = true;
-#endif
         }
     }
 }
