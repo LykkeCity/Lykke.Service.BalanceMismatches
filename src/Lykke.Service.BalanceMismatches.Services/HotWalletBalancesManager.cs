@@ -1,9 +1,8 @@
-﻿using Lykke.Service.BalanceMismatches.Core.Repositories;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Lykke.Service.BalanceMismatches.Core.Repositories;
 using Lykke.Service.BalanceMismatches.Core.Services;
 using Microsoft.Extensions.Caching.Distributed;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Lykke.Service.BalanceMismatches.Services
 {
@@ -41,9 +40,6 @@ namespace Lykke.Service.BalanceMismatches.Services
                 decimal currentBalance = await FetchAssetBalanceAsync(assetId);
 
                 decimal newBalance = currentBalance + diff;
-                if (currentBalance < 0)
-                    throw new InvalidOperationException(
-                        $"{assetId} hot wallet balance change from {currentBalance} with diff = {diff} resulted in negative value");
 
                 await UpdateAssetVolumeAsync(assetId, newBalance);
                 return (currentBalance, newBalance);
