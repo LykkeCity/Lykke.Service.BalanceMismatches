@@ -10,6 +10,7 @@ using Lykke.Service.BalanceMismatches.Core.Services;
 using Lykke.Service.BalanceMismatches.Services;
 using Lykke.Service.BalanceMismatches.Settings;
 using Lykke.SettingsReader;
+using StackExchange.Redis;
 
 namespace Lykke.Service.BalanceMismatches.Modules
 {
@@ -25,6 +26,8 @@ namespace Lykke.Service.BalanceMismatches.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            var settings = _appSettings.CurrentValue.BalanceMismatchesService;
+
             builder.RegisterType<HotWalletBalancesManager>()
                 .As<IHotWalletBalancesManager>()
                 .SingleInstance();
@@ -32,7 +35,11 @@ namespace Lykke.Service.BalanceMismatches.Modules
             builder.RegisterType<HotWalletManager>()
                 .As<IHotWalletManager>()
                 .SingleInstance()
-                .WithParameter(TypedParameter.From(_appSettings.Nested(s => s.BalanceMismatchesService.Assets).CurrentValue));
+                .WithParameter(TypedParameter.From(settings.Assets));
+
+            builder.Register(context => ConnectionMultiplexer.Connect(settings.RedisConnString))
+                .As<IConnectionMultiplexer>()
+                .SingleInstance();
 
             builder.RegisterBalancesClient(_appSettings.Nested(s => s.BalancesServiceClient).CurrentValue);
 

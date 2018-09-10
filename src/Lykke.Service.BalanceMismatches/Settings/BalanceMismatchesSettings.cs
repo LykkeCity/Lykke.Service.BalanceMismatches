@@ -10,6 +10,8 @@ namespace Lykke.Service.BalanceMismatches.Settings
 
         public CqrsSettings Cqrs { get; set; }
 
+        public string RedisConnString { get; set; }
+
         public List<string> Assets { get; set; }
     }
 }

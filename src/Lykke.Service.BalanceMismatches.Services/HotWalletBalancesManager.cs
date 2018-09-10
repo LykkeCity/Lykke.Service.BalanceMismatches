@@ -1,20 +1,24 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Lykke.Service.BalanceMismatches.Core.Repositories;
 using Lykke.Service.BalanceMismatches.Core.Services;
-using Microsoft.Extensions.Caching.Distributed;
+using StackExchange.Redis;
 
 namespace Lykke.Service.BalanceMismatches.Services
 {
     public class HotWalletBalancesManager : IHotWalletBalancesManager
     {
-        private readonly IDistributedCache _cache;
+        private const string _operationKeyPattern = "BalanceMismatches:opId:{0}";
+        private const string _assetKeyPattern = "BalanceMismatches:assetId:{0}";
+
+        private readonly IDatabase _db;
         private readonly IWalletBalanceRepository _walletBalanceRepository;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
-        public HotWalletBalancesManager(IDistributedCache cache, IWalletBalanceRepository walletBalanceRepository)
+        public HotWalletBalancesManager(IConnectionMultiplexer connectionMultiplexer, IWalletBalanceRepository walletBalanceRepository)
         {
-            _cache = cache;
+            _db = connectionMultiplexer.GetDatabase();
             _walletBalanceRepository = walletBalanceRepository;
         }
 
@@ -23,8 +27,7 @@ namespace Lykke.Service.BalanceMismatches.Services
             await _lock.WaitAsync();
             try
             {
-                decimal result = await FetchAssetBalanceAsync(assetId);
-                return result;
+                return await FetchAssetBalanceAsync(assetId, true);
             }
             finally
             {
@@ -32,16 +35,26 @@ namespace Lykke.Service.BalanceMismatches.Services
             }
         }
 
-        public async Task<(decimal, decimal)> UpdateAsync(string assetId, decimal diff)
+        public async Task<(decimal, decimal)> UpdateAsync(string assetId, decimal diff, string operationId)
         {
+            var operationKey = string.IsNullOrEmpty(operationId)
+                ? null
+                : string.Format(_operationKeyPattern, operationId);
+
             await _lock.WaitAsync();
             try
             {
-                decimal currentBalance = await FetchAssetBalanceAsync(assetId);
+                decimal currentBalance = await FetchAssetBalanceAsync(assetId, false);
+                if (operationKey != null && await _db.KeyExistsAsync(operationKey))
+                    return (currentBalance, currentBalance);
 
                 decimal newBalance = currentBalance + diff;
 
-                await UpdateAssetVolumeAsync(assetId, newBalance);
+                var assetKey = string.Format(_assetKeyPattern, assetId);
+                await _db.StringSetAsync(assetKey, newBalance.ToString(), TimeSpan.FromHours(1));
+
+                await _walletBalanceRepository.UpdateAsync(assetId, newBalance);
+
                 return (currentBalance, newBalance);
             }
             finally
@@ -50,9 +63,10 @@ namespace Lykke.Service.BalanceMismatches.Services
             }
         }
 
-        private async Task<decimal> FetchAssetBalanceAsync(string assetId)
+        private async Task<decimal> FetchAssetBalanceAsync(string assetId, bool cachedIfNeeded)
         {
-            string assetVolumeStr = await _cache.GetStringAsync(assetId);
+            var assetKey = string.Format(_assetKeyPattern, assetId);
+            string assetVolumeStr = await _db.StringGetAsync(assetKey);
             if (!string.IsNullOrWhiteSpace(assetVolumeStr))
                 return decimal.Parse(assetVolumeStr);
 
@@ -60,15 +74,11 @@ namespace Lykke.Service.BalanceMismatches.Services
             var walletBalance = await _walletBalanceRepository.GetWalletBalanceAsync(assetId);
             if (walletBalance.HasValue)
                 result = walletBalance.Value;
-            await _cache.SetStringAsync(assetId, result.ToString());
+
+            if (cachedIfNeeded)
+                await _db.StringSetAsync(assetKey, result.ToString());
+
             return result;
-        }
-
-        private async Task UpdateAssetVolumeAsync(string assetId, decimal newBalance)
-        {
-            await _cache.SetStringAsync(assetId, newBalance.ToString());
-
-            await _walletBalanceRepository.UpdateAsync(assetId, newBalance);
         }
     }
 }

@@ -6,6 +6,6 @@ namespace Lykke.Service.BalanceMismatches.Core.Services
     {
         Task<decimal?> GetByAssetIdAsync(string assetId);
 
-        Task<(decimal, decimal)> UpdateAsync(string assetId, decimal diff);
+        Task<(decimal, decimal)> UpdateAsync(string assetId, decimal diff, string operationId);
     }
 }

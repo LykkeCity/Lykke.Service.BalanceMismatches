@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Common.Log;
+using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.Job.BlockchainCashoutProcessor.Contract.Events;
 using Lykke.Service.BalanceMismatches.Core.Services;
@@ -23,6 +24,7 @@ namespace Lykke.Service.BalanceMismatches.Cqrs
             _log = logFactory.CreateLog(this);
         }
 
+        [UsedImplicitly]
         internal async Task Handle(Job.BlockchainCashinDetector.Contract.Events.CashinCompletedEvent evt)
         {
             if (!_hotWalletManager.IsAssetIdConfigured(evt.AssetId))
@@ -31,9 +33,13 @@ namespace Lykke.Service.BalanceMismatches.Cqrs
                 return;
             }
 
-            await _hotWalletBalancesManager.UpdateAsync(evt.AssetId, evt.Amount);
+            await _hotWalletBalancesManager.UpdateAsync(
+                evt.AssetId,
+                evt.Amount,
+                evt.OperationId.ToString());
         }
 
+        [UsedImplicitly]
         internal async Task Handle(CashinCompletedEvent evt)
         {
             if (!_hotWalletManager.IsAssetIdConfigured(evt.AssetId))
@@ -42,9 +48,13 @@ namespace Lykke.Service.BalanceMismatches.Cqrs
                 return;
             }
 
-            await _hotWalletBalancesManager.UpdateAsync(evt.AssetId, evt.Amount);
+            await _hotWalletBalancesManager.UpdateAsync(
+                evt.AssetId,
+                evt.Amount,
+                evt.OperationId.ToString());
         }
 
+        [UsedImplicitly]
         internal async Task Handle(CashoutCompletedEvent evt)
         {
             if (!_hotWalletManager.IsAssetIdConfigured(evt.AssetId))
@@ -53,7 +63,10 @@ namespace Lykke.Service.BalanceMismatches.Cqrs
                 return;
             }
 
-            await _hotWalletBalancesManager.UpdateAsync(evt.AssetId, -Math.Abs(evt.Amount));
+            await _hotWalletBalancesManager.UpdateAsync(
+                evt.AssetId,
+                -Math.Abs(evt.Amount),
+                evt.OperationId.ToString());
         }
     }
 }

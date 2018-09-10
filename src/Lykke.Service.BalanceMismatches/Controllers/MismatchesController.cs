@@ -72,7 +72,7 @@ namespace Lykke.Service.BalanceMismatches.Controllers
             if (diff == 0)
                 return BadRequest($"{nameof(diff)} is 0");
 
-            (decimal oldBalance, decimal newBalance) = await _hotWalletsBalanceRepository.UpdateAsync(assetId, diff);
+            (decimal oldBalance, decimal newBalance) = await _hotWalletsBalanceRepository.UpdateAsync(assetId, diff, null);
 
             return Ok(
                 new HotWalletBalanceChangeResponse
