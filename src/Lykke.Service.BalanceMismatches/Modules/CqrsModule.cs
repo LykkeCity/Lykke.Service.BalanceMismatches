@@ -91,6 +91,7 @@ namespace Lykke.Service.BalanceMismatches.Modules
 
                     .ListeningEvents(typeof(Job.BlockchainCashinDetector.Contract.Events.CashinCompletedEvent))
                     .From(BlockchainCashinDetectorBoundedContext.Name).On(eventsRoute)
+                    .WithProjection(typeof(CashOperationsProjection), BlockchainCashinDetectorBoundedContext.Name)
 
                     .ListeningEvents(typeof(CashinCompletedEvent), typeof(CashoutCompletedEvent))
                     .From(BlockchainCashoutProcessorBoundedContext.Name).On(eventsRoute)
