@@ -72,7 +72,6 @@ namespace Lykke.Service.BalanceMismatches.Modules
             IMessagingEngine messagingEngine,
             ILogFactory logFactory)
         {
-            var defaultRetryDelay = (long)_settings.RetryDelay.TotalMilliseconds;
             const string eventsRoute = "evets";
 
             return new CqrsEngine(
@@ -88,7 +87,7 @@ namespace Lykke.Service.BalanceMismatches.Modules
                     environment: "lykke")),
 
                 Register.BoundedContext(Self)
-                    .FailedCommandRetryDelay(defaultRetryDelay)
+                    .FailedCommandRetryDelay(_settings.RetryDelay)
 
                     .ListeningEvents(typeof(Job.BlockchainCashinDetector.Contract.Events.CashinCompletedEvent))
                     .From(BlockchainCashinDetectorBoundedContext.Name).On(eventsRoute)
