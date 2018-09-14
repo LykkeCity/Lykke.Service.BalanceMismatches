@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Collections.Generic;
+using Autofac;
 using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.Cqrs;
@@ -10,10 +11,11 @@ using Lykke.Messaging;
 using Lykke.Messaging.Contract;
 using Lykke.Messaging.RabbitMq;
 using Lykke.Messaging.Serialization;
+using Lykke.Sdk;
 using Lykke.Service.BalanceMismatches.Cqrs;
+using Lykke.Service.BalanceMismatches.Services;
 using Lykke.Service.BalanceMismatches.Settings;
 using Lykke.SettingsReader;
-using System.Collections.Generic;
 
 namespace Lykke.Service.BalanceMismatches.Modules
 {
@@ -37,6 +39,10 @@ namespace Lykke.Service.BalanceMismatches.Modules
             {
                 Uri = _settings.RabbitConnectionString
             };
+
+            builder.RegisterType<StartupManager>()
+                .As<IStartupManager>()
+                .SingleInstance();
 
             // Command handlers
             builder.RegisterType<CashOperationsProjection>();
@@ -63,7 +69,7 @@ namespace Lykke.Service.BalanceMismatches.Modules
                     return CreateEngine(ctx, messagingEngine, logFactory);
                 })
                 .As<ICqrsEngine>()
-                .AutoActivate()
+                //.AutoActivate()
                 .SingleInstance();
         }
 
@@ -76,7 +82,7 @@ namespace Lykke.Service.BalanceMismatches.Modules
 
             return new CqrsEngine(
                 logFactory,
-                ctx.Resolve<IDependencyResolver>(),
+                new AutofacDependencyResolver(ctx.Resolve<IComponentContext>()),
                 messagingEngine,
                 new DefaultEndpointProvider(),
                 true,

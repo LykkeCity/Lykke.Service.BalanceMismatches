@@ -9,6 +9,6 @@
     <Folder Include="Domain\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Common" Version="7.0.4" />
+    <PackageReference Include="Lykke.Common" Version="7.1.0" />
   </ItemGroup>
 </Project>
