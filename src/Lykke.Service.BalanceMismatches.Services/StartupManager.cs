@@ -15,7 +15,7 @@ namespace Lykke.Service.BalanceMismatches.Services
 
         public Task StartAsync()
         {
-            Task.Run(() => _cqrsEngine.Start());
+            _cqrsEngine.Start();
 
             return Task.CompletedTask;
         }
