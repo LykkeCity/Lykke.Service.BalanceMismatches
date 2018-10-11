@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Lykke.Service.BalanceMismatches.Core.Repositories;
 using Lykke.Service.BalanceMismatches.Core.Services;
@@ -11,10 +10,11 @@ namespace Lykke.Service.BalanceMismatches.Services
     {
         private const string _operationKeyPattern = "BalanceMismatches:opId:{0}";
         private const string _assetKeyPattern = "BalanceMismatches:assetId:{0}";
+        private const string _assetLockKeyPattern = "BalanceMismatches:assetId:lock:{0}";
+        private const int _maxGetLockRetryCount = 5;
 
         private readonly IDatabase _db;
         private readonly IWalletBalanceRepository _walletBalanceRepository;
-        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
         public HotWalletBalancesManager(IConnectionMultiplexer connectionMultiplexer, IWalletBalanceRepository walletBalanceRepository)
         {
@@ -24,14 +24,18 @@ namespace Lykke.Service.BalanceMismatches.Services
 
         public async Task<decimal?> GetByAssetIdAsync(string assetId)
         {
-            await _lock.WaitAsync();
+            var token = Environment.MachineName;
+            var assetLockKey = string.Format(_assetLockKeyPattern, assetId);
+            if (!await _db.LockTakeAsync(assetLockKey, token, TimeSpan.FromSeconds(5)))
+                return null;
+
             try
             {
                 return await FetchAssetBalanceAsync(assetId, true);
             }
             finally
             {
-                _lock.Release();
+                await _db.LockReleaseAsync(assetLockKey, token);
             }
         }
 
@@ -41,7 +45,16 @@ namespace Lykke.Service.BalanceMismatches.Services
                 ? null
                 : string.Format(_operationKeyPattern, operationId);
 
-            await _lock.WaitAsync();
+            var token = Environment.MachineName;
+            var assetLockKey = string.Format(_assetLockKeyPattern, assetId);
+            int getLockRetryCount = 0;
+            while (!await _db.LockTakeAsync(assetLockKey, token, TimeSpan.FromSeconds(5)))
+            {
+                ++getLockRetryCount;
+                if (getLockRetryCount > _maxGetLockRetryCount)
+                    throw new InvalidOperationException($"Couldn't update balance for {assetId} for {diff} from operation {operationId}");
+            }
+
             try
             {
                 decimal currentBalance = await FetchAssetBalanceAsync(assetId, false);
@@ -59,7 +72,7 @@ namespace Lykke.Service.BalanceMismatches.Services
             }
             finally
             {
-                _lock.Release();
+                await _db.LockReleaseAsync(assetLockKey, token);
             }
         }
 
