@@ -1,17 +1,19 @@
-﻿using Lykke.Service.BalanceMismatches.Client.Models;
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Lykke.Service.BalanceMismatches.Client;
+using Lykke.Service.BalanceMismatches.Client.Models;
 using Lykke.Service.BalanceMismatches.Core.Services;
 using Lykke.Service.BalanceMismatches.Models;
 using Lykke.Service.Balances.Client;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace Lykke.Service.BalanceMismatches.Controllers
 {
     [Route("api/[controller]")]
-    public class MismatchesController : Controller
+    public class MismatchesController : Controller, IBalanceMismatchesClient
     {
         private readonly IBalancesClient _balancesClient;
         private readonly IHotWalletBalancesManager _hotWalletsBalanceRepository;
@@ -25,17 +27,14 @@ namespace Lykke.Service.BalanceMismatches.Controllers
         /// <summary>Fetches asset balance mismatch.</summary>
         [HttpPost("{assetId}")]
         [SwaggerOperation("GetBalanceMismath")]
-        [ProducesResponseType(typeof(AssetBalanceMismatchResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetBalanceMismath(string assetId)
+        public async Task<AssetBalanceMismatchResponse> GetBalanceMismathAsync(string assetId)
         {
             if (string.IsNullOrWhiteSpace(assetId))
-                return BadRequest($"{nameof(assetId)} is empty");
+                throw new ArgumentNullException();
 
             var hotWalletBalance = await _hotWalletsBalanceRepository.GetByAssetIdAsync(assetId);
             if (!hotWalletBalance.HasValue)
-                return NotFound();
+                throw new InvalidOperationException($"Hot walet balance for {assetId} is not found");
 
             var totalBalances = await _balancesClient.GetTotalBalances();
 
@@ -48,14 +47,13 @@ namespace Lykke.Service.BalanceMismatches.Controllers
                 clientSumReserved = assetBalance.Reserved;
             }
 
-            return Ok(
-                new AssetBalanceMismatchResponse
-                {
-                    AssetId = assetId,
-                    HotWalletBalance = hotWalletBalance.Value,
-                    ClientSumBalance = clientSumBalance,
-                    ClientSumReserved = clientSumReserved,
-                });
+            return new AssetBalanceMismatchResponse
+            {
+                AssetId = assetId,
+                HotWalletBalance = hotWalletBalance.Value,
+                ClientSumBalance = clientSumBalance,
+                ClientSumReserved = clientSumReserved,
+            };
         }
 
         /// <summary>Fetches asset balance mismatch.</summary>

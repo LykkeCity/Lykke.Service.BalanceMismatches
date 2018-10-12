@@ -1,32 +1,38 @@
-{
-  "BalanceMismatchesService": 
-  {
-    "Db":
-    {
-      "LogsConnString": "${LogsConnString}:[AzureTableStorage]",
-      "DataConnString": "${BalanceMismatchesDataConnString}:[AzureTableStorage]"
-    },
-    "Cqrs":
-    {
-      "RabbitConnectionString": "${CqrsRabbitConnString}:[RabbitMq]",
-      "RetryDelay": "00:00:15"
-    },
-    "HotWallets": "${BalanceMismatchesHotWallets}:[JsonArray]"
-  },
-  "MonitoringServiceClient": 
-  {
-    "MonitoringServiceUrl": "${MonitoringServiceUrl}"
-  },
-  "SlackNotifications": 
-  {
-    "AzureQueue": 
-    {
-      "ConnectionString": "${SlackNotificationsConnString}:[AzureTableStorage]",
-      "QueueName": "slack-notifications"
-    }
-  },
-  "BalancesServiceClient":
-  {
-    "ServiceUrl": "${BalancesServiceUrl}"
-  }
-}
+BalanceMismatchesService:
+    Db:
+        LogsConnString:
+            settings-key: BalanceMismatchesService-LogsConnString
+            types:
+                - AzureTableStorage
+        DataConnString:
+            settings-key: BalanceMismatchesService-DataConnString
+            types:
+                - AzureTableStorage
+    Cqrs:
+        RabbitConnectionString:
+            settings-key: RabbitBlockchainsConnString
+            types:
+                - RabbitMq
+        RetryDelay: 00:00:15
+    RedisConnString:
+        settings-key: RedisLykkeConnString
+        types:
+            - Redis
+    Assets:
+        settings-key: BalanceMismatchesService-Assets
+        types:
+            - JsonArray
+SlackNotifications:
+    AzureQueue:
+        ConnectionString:
+            settings-key: SlackNotificationsConnString
+            types:
+                - AzureTableStorage
+        QueueName:
+            settings-key: SlackQueueName
+MonitoringServiceClient:
+    MonitoringServiceUrl:
+        settings-key: MonitoringServiceUrl
+BalancesServiceClient:
+    ServiceUrl:
+        settings-key: BalancesServiceUrl
