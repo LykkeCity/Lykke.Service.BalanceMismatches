@@ -69,7 +69,6 @@ namespace Lykke.Service.BalanceMismatches.Modules
                     return CreateEngine(ctx, messagingEngine, logFactory);
                 })
                 .As<ICqrsEngine>()
-                //.AutoActivate()
                 .SingleInstance();
         }
 

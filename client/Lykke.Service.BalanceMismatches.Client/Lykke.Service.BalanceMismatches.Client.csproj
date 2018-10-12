@@ -28,4 +28,10 @@
     <PackageReference Include="Lykke.SettingsReader" Version="4.1.1" />
     <PackageReference Include="Refit" Version="4.6.48" />
   </ItemGroup>
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+    <ItemGroup>
+      <DocFile Include="$(OutputPath)$(AssemblyName).xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
+  </Target>
 </Project>

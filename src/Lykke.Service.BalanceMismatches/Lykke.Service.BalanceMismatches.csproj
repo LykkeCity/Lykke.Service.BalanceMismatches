@@ -7,12 +7,10 @@
     <RootNamespace>Lykke.Service.BalanceMismatches</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netcoreapp2.0\Lykke.Service.BalanceMismatches.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\Lykke.Service.BalanceMismatches.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -35,10 +33,4 @@
     <ProjectReference Include="..\Lykke.Service.BalanceMismatches.Core\Lykke.Service.BalanceMismatches.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.BalanceMismatches.Services\Lykke.Service.BalanceMismatches.Services.csproj" />
   </ItemGroup>
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <ItemGroup>
-      <DocFile Include="$(OutputPath)$(AssemblyName).xml" />
-    </ItemGroup>
-    <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
-  </Target>
 </Project>
