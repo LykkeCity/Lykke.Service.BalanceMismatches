@@ -1,2 +1,2 @@
 # Lykke.Service.BalanceMismatches
-Service for calculation balance mismatches between sum of client balances and hotwallets
+Service for balance mismatch calculation for particular assetId between sum of client asset balances and asset hotwallet balance

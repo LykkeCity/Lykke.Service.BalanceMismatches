@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Lykke.Service.BalanceMismatches.Services</AssemblyName>
+    <RootNamespace>Lykke.Service.BalanceMismatches.Services</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Lykke.Cqrs" Version="6.1.2" />
+    <PackageReference Include="Lykke.Sdk" Version="5.3.1" />
+    <PackageReference Include="Lykke.Service.Balances.Client" Version="2.1.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.513" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.BalanceMismatches.Core\Lykke.Service.BalanceMismatches.Core.csproj" />
+  </ItemGroup>
+</Project>

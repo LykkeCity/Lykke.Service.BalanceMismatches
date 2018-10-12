@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Version>1.0.1</Version>
+    <AssemblyName>Lykke.Service.BalanceMismatches</AssemblyName>
+    <RootNamespace>Lykke.Service.BalanceMismatches</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Lykke.Job.BlockchainCashinDetector.Contract" Version="2.0.0" />
+    <PackageReference Include="Lykke.Job.BlockchainCashoutProcessor.Contract" Version="3.0.1" />
+    <PackageReference Include="Lykke.Messaging" Version="6.2.0" />
+    <PackageReference Include="Lykke.Messaging.RabbitMq" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.Service.BalanceMismatches.Client\Lykke.Service.BalanceMismatches.Client.csproj" />
+    <ProjectReference Include="..\Lykke.Service.BalanceMismatches.AzureRepositories\Lykke.Service.BalanceMismatches.AzureRepositories.csproj" />
+    <ProjectReference Include="..\Lykke.Service.BalanceMismatches.Core\Lykke.Service.BalanceMismatches.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.BalanceMismatches.Services\Lykke.Service.BalanceMismatches.Services.csproj" />
+  </ItemGroup>
+</Project>
